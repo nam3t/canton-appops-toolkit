@@ -306,10 +306,11 @@ snapshot
 
 This structure lets the project generate useful reports while keeping sensitive data out of the default output.
 
-The sample command is:
+The sample commands are:
 
 ```bash
 node bin/canton-appops.js collect --sample
+node bin/canton-appops.js report --sample
 ```
 
 For JSON output:
@@ -391,10 +392,12 @@ Recommended reading order inside this repo:
 2. [`docs/project-context.md`](project-context.md) — this conceptual context document.
 3. [`docs/privacy-model.md`](privacy-model.md) — privacy constraints and safe defaults.
 4. [`docs/metrics-schema.md`](metrics-schema.md) — metrics envelope and sample collector output.
-5. [`schemas/appops-metrics.schema.json`](../schemas/appops-metrics.schema.json) — machine-readable draft schema.
-6. [`samples/sample-appops-metrics.json`](../samples/sample-appops-metrics.json) — deterministic sample snapshot.
-7. `src/cli.js` and `src/metrics.js` — current prototype implementation.
-8. `test/cli.test.js` and `test/metrics.test.js` — expected behavior.
+5. [`docs/report-generator.md`](report-generator.md) — sample report format and privacy guarantees.
+6. [`schemas/appops-metrics.schema.json`](../schemas/appops-metrics.schema.json) — machine-readable draft schema.
+7. [`samples/sample-appops-metrics.json`](../samples/sample-appops-metrics.json) — deterministic sample snapshot.
+8. [`samples/sample-appops-report.md`](../samples/sample-appops-report.md) — deterministic sample Markdown report.
+9. `src/cli.js`, `src/metrics.js`, and `src/report.js` — current prototype implementation.
+10. `test/cli.test.js`, `test/metrics.test.js`, and `test/report.test.js` — expected behavior.
 
 External background:
 

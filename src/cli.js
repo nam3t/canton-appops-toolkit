@@ -5,9 +5,11 @@ import {
   stringifyMetricsSnapshot,
   validateMetricsSnapshot,
 } from './metrics.js';
+import { renderMetricsReport } from './report.js';
 
 export const CONFIG_FILE = 'canton-appops.config.yaml';
 export const SAMPLE_METRICS_FILE = path.join('.canton-appops', 'metrics', 'sample-appops-metrics.json');
+export const SAMPLE_REPORT_FILE = path.join('.canton-appops', 'reports', 'sample-appops-report.md');
 export const VERSION = '0.1.0';
 
 const HELP_TEXT = `Canton AppOps Toolkit
@@ -22,19 +24,22 @@ Commands:
   canton-appops init              Create a starter local config file
   canton-appops doctor            Check local config and environment
   canton-appops collect --sample  Write a privacy-safe sample metrics snapshot
+  canton-appops report --sample   Generate a privacy-safe sample Markdown report
   canton-appops help              Show this help message
 
 Options:
   -h, --help                Show help
   -v, --version             Show version
   --force                   Overwrite an existing config when used with init
-  --stdout                  Print collect output to stdout instead of writing a file
+  --stdout                  Print collect/report output to stdout instead of writing a file
 
 Examples:
   canton-appops init
   canton-appops doctor
   canton-appops collect --sample
   canton-appops collect --sample --stdout
+  canton-appops report --sample
+  canton-appops report --sample --stdout
 `;
 
 export const DEFAULT_CONFIG = `# Canton AppOps Toolkit starter config
@@ -174,6 +179,24 @@ async function writeSampleMetricsFile(cwd, snapshot) {
   return SAMPLE_METRICS_FILE;
 }
 
+async function writeSampleReportFile(cwd, report) {
+  const outputPath = path.join(cwd, SAMPLE_REPORT_FILE);
+  await mkdir(path.dirname(outputPath), { recursive: true });
+  await writeFile(outputPath, report, 'utf8');
+  return SAMPLE_REPORT_FILE;
+}
+
+function buildValidatedSampleSnapshot(profile) {
+  const snapshot = buildSampleMetricsSnapshot(profile);
+  const validation = validateMetricsSnapshot(snapshot);
+
+  if (!validation.ok) {
+    return { snapshot, errors: validation.errors };
+  }
+
+  return { snapshot, errors: [] };
+}
+
 export function renderHelp() {
   return HELP_TEXT;
 }
@@ -242,11 +265,10 @@ export async function runCollect({ args, cwd, stdout, stderr }) {
   }
 
   const profile = await readAppProfile(cwd);
-  const snapshot = buildSampleMetricsSnapshot(profile);
-  const validation = validateMetricsSnapshot(snapshot);
+  const { snapshot, errors } = buildValidatedSampleSnapshot(profile);
 
-  if (!validation.ok) {
-    write(stderr, `Sample metrics snapshot failed validation:\n${validation.errors.join('\n')}\n`);
+  if (errors.length > 0) {
+    write(stderr, `Sample metrics snapshot failed validation:\n${errors.join('\n')}\n`);
     return 1;
   }
 
@@ -258,6 +280,39 @@ export async function runCollect({ args, cwd, stdout, stderr }) {
   const relativePath = await writeSampleMetricsFile(cwd, snapshot);
   write(stdout, `Collected sample metrics -> ${relativePath}\n`);
   write(stdout, 'Snapshot is aggregate-only and excludes raw Canton transaction payloads.\n');
+  return 0;
+}
+
+export async function runReport({ args, cwd, stdout, stderr }) {
+  if (!hasFlag(args, '--sample')) {
+    write(stderr, 'Only sample reports are supported in this prototype. Run `canton-appops report --sample`.\n');
+    return 1;
+  }
+
+  const profile = await readAppProfile(cwd);
+  const { snapshot, errors } = buildValidatedSampleSnapshot(profile);
+
+  if (errors.length > 0) {
+    write(stderr, `Sample report metrics failed validation:\n${errors.join('\n')}\n`);
+    return 1;
+  }
+
+  let report;
+  try {
+    report = renderMetricsReport(snapshot);
+  } catch (error) {
+    write(stderr, `${error.message}\n`);
+    return 1;
+  }
+
+  if (hasFlag(args, '--stdout')) {
+    write(stdout, report);
+    return 0;
+  }
+
+  const relativePath = await writeSampleReportFile(cwd, report);
+  write(stdout, `Generated sample report -> ${relativePath}\n`);
+  write(stdout, 'Report is sample-only and not evidence of real Canton usage.\n');
   return 0;
 }
 
@@ -289,6 +344,10 @@ export async function run(argv, io = {}) {
 
   if (command === 'collect') {
     return await runCollect({ args: args.slice(1), cwd, stdout, stderr });
+  }
+
+  if (command === 'report') {
+    return await runReport({ args: args.slice(1), cwd, stdout, stderr });
   }
 
   write(stderr, `Unknown command: ${command}\n`);

@@ -51,6 +51,7 @@ test('--help prints the planned command surface', async () => {
   assert.match(result.stdout, /canton-appops init/);
   assert.match(result.stdout, /canton-appops doctor/);
   assert.match(result.stdout, /canton-appops collect --sample/);
+  assert.match(result.stdout, /canton-appops report --sample/);
   assert.match(result.stdout, /privacy-preserving/i);
   assert.equal(result.stderr, '');
 });
@@ -159,6 +160,56 @@ test('collect --sample --stdout prints the sample metrics snapshot as JSON', asy
     assert.equal(snapshot.privacy.mode, 'local-only');
     assert.equal(snapshot.metrics.operations.error_count, 1);
   });
+});
+
+test('report --sample writes a privacy-safe weekly Markdown report', async () => {
+  await withTempDir(async (dir) => {
+    const init = await runCli(['init'], { cwd: dir });
+    assert.equal(init.code, 0);
+
+    const result = await runCli(['report', '--sample'], { cwd: dir });
+    assert.equal(result.code, 0);
+    assert.match(result.stdout, /Generated sample report/);
+    assert.match(result.stdout, /.canton-appops\/reports\/sample-appops-report\.md/);
+    assert.equal(result.stderr, '');
+
+    const outputPath = path.join(dir, '.canton-appops', 'reports', 'sample-appops-report.md');
+    const report = await readFile(outputPath, 'utf8');
+
+    assert.match(report, /^# Canton AppOps Weekly Report/m);
+    assert.match(report, /\*\*App:\*\* example-canton-app/);
+    assert.match(report, /Total workflows:\*\* 24/);
+    assert.match(report, /Estimated traffic units:\*\* 1,840/);
+    assert.match(report, /Reward-readiness status:\*\* sample-only/);
+    assert.match(report, /Raw payloads included:\*\* no/);
+    assert.match(report, /Sample metrics are not evidence of real Canton usage\./);
+    assert.doesNotMatch(report, /raw_contract_payload|party::|customer_name/i);
+  });
+});
+
+test('report --sample --stdout prints the Markdown report without writing a file', async () => {
+  await withTempDir(async (dir) => {
+    const result = await runCli(['report', '--sample', '--stdout'], { cwd: dir });
+
+    assert.equal(result.code, 0);
+    assert.equal(result.stderr, '');
+    assert.match(result.stdout, /^# Canton AppOps Weekly Report/m);
+    assert.match(result.stdout, /Source: sample/);
+    assert.match(result.stdout, /not reward farming or reward prediction/i);
+
+    await assert.rejects(
+      readFile(path.join(dir, '.canton-appops', 'reports', 'sample-appops-report.md'), 'utf8'),
+      /ENOENT/,
+    );
+  });
+});
+
+test('report refuses non-sample mode until real adapters exist', async () => {
+  const result = await runCli(['report']);
+
+  assert.equal(result.code, 1);
+  assert.match(result.stderr, /Only sample reports are supported/);
+  assert.match(result.stderr, /canton-appops report --sample/);
 });
 
 test('unknown commands fail with a useful error', async () => {

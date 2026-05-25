@@ -24,6 +24,14 @@ For scripting:
 canton-appops collect --sample --stdout
 ```
 
+To render the sample metrics as a weekly Markdown report:
+
+```bash
+canton-appops report --sample
+```
+
+Report format documentation: [`report-generator.md`](report-generator.md).
+
 ## Envelope
 
 Top-level fields:

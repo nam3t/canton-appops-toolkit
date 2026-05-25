@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "node --test",
-    "check": "node --check bin/canton-appops.js && node --check src/cli.js && node --check src/metrics.js && node --check test/cli.test.js && node --check test/metrics.test.js"
+    "check": "node --check bin/canton-appops.js && node --check src/cli.js && node --check src/metrics.js && node --check src/report.js && node --check test/cli.test.js && node --check test/metrics.test.js && node --check test/report.test.js"
   },
   "engines": {
     "node": ">=20"

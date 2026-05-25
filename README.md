@@ -37,6 +37,8 @@ node bin/canton-appops.js init
 node bin/canton-appops.js doctor
 node bin/canton-appops.js collect --sample
 node bin/canton-appops.js collect --sample --stdout
+node bin/canton-appops.js report --sample
+node bin/canton-appops.js report --sample --stdout
 ```
 
 Install the local binary during development:
@@ -48,7 +50,7 @@ canton-appops --help
 
 The starter config is written to `canton-appops.config.yaml` and defaults to local-only, aggregate-only, no raw payload export.
 
-For conceptual background, start with [`docs/project-context.md`](docs/project-context.md). The sample metrics snapshot is documented in [`docs/metrics-schema.md`](docs/metrics-schema.md), with a machine-readable draft at [`schemas/appops-metrics.schema.json`](schemas/appops-metrics.schema.json). A deterministic fixture is available at [`samples/sample-appops-metrics.json`](samples/sample-appops-metrics.json).
+For conceptual background, start with [`docs/project-context.md`](docs/project-context.md). The sample metrics snapshot is documented in [`docs/metrics-schema.md`](docs/metrics-schema.md), with a machine-readable draft at [`schemas/appops-metrics.schema.json`](schemas/appops-metrics.schema.json). A deterministic fixture is available at [`samples/sample-appops-metrics.json`](samples/sample-appops-metrics.json). The sample Markdown report is documented in [`docs/report-generator.md`](docs/report-generator.md), with a deterministic fixture at [`samples/sample-appops-report.md`](samples/sample-appops-report.md).
 
 ## Why this exists
 
