@@ -48,7 +48,7 @@ canton-appops --help
 
 The starter config is written to `canton-appops.config.yaml` and defaults to local-only, aggregate-only, no raw payload export.
 
-The sample metrics snapshot is documented in [`docs/metrics-schema.md`](docs/metrics-schema.md), with a machine-readable draft at [`schemas/appops-metrics.schema.json`](schemas/appops-metrics.schema.json). A deterministic fixture is available at [`samples/sample-appops-metrics.json`](samples/sample-appops-metrics.json).
+For conceptual background, start with [`docs/project-context.md`](docs/project-context.md). The sample metrics snapshot is documented in [`docs/metrics-schema.md`](docs/metrics-schema.md), with a machine-readable draft at [`schemas/appops-metrics.schema.json`](schemas/appops-metrics.schema.json). A deterministic fixture is available at [`samples/sample-appops-metrics.json`](samples/sample-appops-metrics.json).
 
 ## Why this exists
 
