@@ -1,0 +1,18 @@
+{
+  "name": "canton-appops-toolkit",
+  "version": "0.1.0",
+  "description": "Open-source, privacy-preserving telemetry and reward-readiness tooling for Canton application providers.",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "canton-appops": "./bin/canton-appops.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check bin/canton-appops.js && node --check src/cli.js && node --check src/metrics.js && node --check test/cli.test.js && node --check test/metrics.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-25T00:00:00.000Z",
+  "app": {
+    "name": "example-canton-app",
+    "environment": "local",
+    "network": "localnet"
+  },
+  "period": {
+    "start": "2026-05-18T00:00:00.000Z",
+    "end": "2026-05-25T00:00:00.000Z",
+    "granularity": "weekly"
+  },
+  "source": {
+    "kind": "sample",
+    "adapters": [
+      "sample"
+    ],
+    "description": "Static privacy-safe sample data for the Canton AppOps Toolkit prototype."
+  },
+  "metrics": {
+    "activity": {
+      "total_workflows": 24,
+      "completed_workflows": 23,
+      "failed_workflows": 1,
+      "unique_templates_touched": 5,
+      "unique_choices_exercised": 8,
+      "top_templates": [
+        {
+          "template": "AppOps:TransferInstruction",
+          "create_count": 10,
+          "exercise_count": 12
+        },
+        {
+          "template": "AppOps:SettlementBatch",
+          "create_count": 6,
+          "exercise_count": 8
+        },
+        {
+          "template": "AppOps:OperatorHeartbeat",
+          "create_count": 7,
+          "exercise_count": 0
+        }
+      ],
+      "top_choices": [
+        {
+          "choice": "AcceptInstruction",
+          "exercise_count": 9
+        },
+        {
+          "choice": "MarkSettled",
+          "exercise_count": 7
+        },
+        {
+          "choice": "ArchiveHeartbeat",
+          "exercise_count": 4
+        }
+      ]
+    },
+    "traffic": {
+      "estimated_traffic_units": 1840,
+      "command_submissions": 48,
+      "accepted_transactions": 46,
+      "rejected_transactions": 2,
+      "read_operations": 120,
+      "write_operations": 36
+    },
+    "operations": {
+      "success_rate": 0.9583,
+      "error_count": 1,
+      "warning_count": 3,
+      "p50_latency_ms": 180,
+      "p95_latency_ms": 420,
+      "last_success_at": "2026-05-25T00:00:00.000Z"
+    }
+  },
+  "privacy": {
+    "mode": "local-only",
+    "aggregate_only": true,
+    "raw_payloads_included": false,
+    "party_ids": "redacted",
+    "contract_ids": "omitted",
+    "counterparty_names": "omitted",
+    "notes": [
+      "Sample snapshot contains aggregate counters only.",
+      "No raw transaction payloads, party identifiers, contract identifiers, or customer names are included."
+    ]
+  },
+  "reward_readiness": {
+    "status": "sample-only",
+    "score": null,
+    "signals": [
+      "workflow activity present",
+      "traffic estimate present",
+      "operational success rate present"
+    ],
+    "caveats": [
+      "Sample metrics are not evidence of real Canton usage.",
+      "Reward-readiness is descriptive reporting, not reward farming or reward prediction."
+    ]
+  }
+}

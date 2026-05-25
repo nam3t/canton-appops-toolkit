@@ -18,6 +18,38 @@ Current focus:
 - generate sample AppOps reports;
 - collect feedback from Canton builders, app providers, and validator operators.
 
+## Quickstart: CLI prototype
+
+The prototype provides a small dependency-free Node.js CLI skeleton.
+
+Requirements:
+
+- Node.js 20+
+- npm
+
+Run locally:
+
+```bash
+npm test
+npm run check
+node bin/canton-appops.js --help
+node bin/canton-appops.js init
+node bin/canton-appops.js doctor
+node bin/canton-appops.js collect --sample
+node bin/canton-appops.js collect --sample --stdout
+```
+
+Install the local binary during development:
+
+```bash
+npm link
+canton-appops --help
+```
+
+The starter config is written to `canton-appops.config.yaml` and defaults to local-only, aggregate-only, no raw payload export.
+
+The sample metrics snapshot is documented in [`docs/metrics-schema.md`](docs/metrics-schema.md), with a machine-readable draft at [`schemas/appops-metrics.schema.json`](schemas/appops-metrics.schema.json). A deterministic fixture is available at [`samples/sample-appops-metrics.json`](samples/sample-appops-metrics.json).
+
 ## Why this exists
 
 Canton app builders need to answer operational questions that are currently hard to answer with a reusable, ecosystem-wide workflow:

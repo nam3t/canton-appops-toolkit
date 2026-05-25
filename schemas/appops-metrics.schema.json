@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nam3t/canton-appops-toolkit/schemas/appops-metrics.schema.json",
+  "title": "Canton AppOps Metrics Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "app",
+    "period",
+    "source",
+    "metrics",
+    "privacy",
+    "reward_readiness"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "app": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "environment", "network"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "environment": { "type": "string", "minLength": 1 },
+        "network": { "type": "string", "minLength": 1 }
+      }
+    },
+    "period": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end", "granularity"],
+      "properties": {
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time" },
+        "granularity": { "enum": ["hourly", "daily", "weekly"] }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["kind", "adapters"],
+      "properties": {
+        "kind": { "enum": ["sample", "ledger-api", "validator-api", "scan-api", "mixed"] },
+        "adapters": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "description": { "type": "string" }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["activity", "traffic", "operations"],
+      "properties": {
+        "activity": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["total_workflows", "completed_workflows", "failed_workflows", "unique_templates_touched"],
+          "properties": {
+            "total_workflows": { "type": "integer", "minimum": 0 },
+            "completed_workflows": { "type": "integer", "minimum": 0 },
+            "failed_workflows": { "type": "integer", "minimum": 0 },
+            "unique_templates_touched": { "type": "integer", "minimum": 0 },
+            "unique_choices_exercised": { "type": "integer", "minimum": 0 },
+            "top_templates": { "type": "array" },
+            "top_choices": { "type": "array" }
+          }
+        },
+        "traffic": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["estimated_traffic_units", "command_submissions", "accepted_transactions"],
+          "properties": {
+            "estimated_traffic_units": { "type": "integer", "minimum": 0 },
+            "command_submissions": { "type": "integer", "minimum": 0 },
+            "accepted_transactions": { "type": "integer", "minimum": 0 },
+            "rejected_transactions": { "type": "integer", "minimum": 0 },
+            "read_operations": { "type": "integer", "minimum": 0 },
+            "write_operations": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "operations": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["success_rate", "error_count", "p95_latency_ms"],
+          "properties": {
+            "success_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+            "error_count": { "type": "integer", "minimum": 0 },
+            "warning_count": { "type": "integer", "minimum": 0 },
+            "p50_latency_ms": { "type": "integer", "minimum": 0 },
+            "p95_latency_ms": { "type": "integer", "minimum": 0 },
+            "last_success_at": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["mode", "aggregate_only", "raw_payloads_included"],
+      "properties": {
+        "mode": { "enum": ["local-only", "explicit-export"] },
+        "aggregate_only": { "const": true },
+        "raw_payloads_included": { "const": false },
+        "party_ids": { "type": "string" },
+        "contract_ids": { "type": "string" },
+        "counterparty_names": { "type": "string" },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "reward_readiness": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["status", "signals", "caveats"],
+      "properties": {
+        "status": { "type": "string" },
+        "score": { "type": ["number", "null"] },
+        "signals": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "caveats": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}
